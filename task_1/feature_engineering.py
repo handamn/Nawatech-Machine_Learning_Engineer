@@ -106,7 +106,7 @@ class SentimentFeatureEngineering:
 # Example usage
 if __name__ == "__main__":
     csv_path = "dataset/processed_sentiment_data.csv"
-    model_path = "feature_engineering/sentiment_features.pkl'"
+    model_path = "feature_engineering/sentiment_features.pkl"
 
     # Initialize feature engineering
     fe = SentimentFeatureEngineering()
