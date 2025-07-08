@@ -1,2 +1,4 @@
 /__pycache__
 /task_1/__pycache__
+/task_1/model/bert/checkpoint-60
+model.safetensors
