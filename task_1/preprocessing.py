@@ -143,8 +143,9 @@ class IndonesianTextPreprocessor:
         return text
 
 class ExploreAndPrepPipeline:
-    def __init__(self, csv_path):
-        self.csv_path = csv_path
+    def __init__(self, dataset_dir):
+        self.dataset_dir = dataset_dir
+        self.csv_path = f"{self.dataset_dir}/dataset_tweet_sentiment_cellular_service_provider.csv"
         self.df = None
         self.preprocessor = IndonesianTextPreprocessor()
     
@@ -186,7 +187,7 @@ class ExploreAndPrepPipeline:
             print(f"{sentiment}: {pct:.1f}%")
     
     # Create visualizations for data information
-    def visualize_data(self):
+    def visualize_data(self, save_plots=True):
         fig, axes = plt.subplots(2, 2, figsize=(15, 10))
         
         # 1. Sentiment Distribution
@@ -226,6 +227,8 @@ class ExploreAndPrepPipeline:
         axes[1, 1].set_ylabel('Frequency')
         
         plt.tight_layout()
+        if save_plots:
+            plt.savefig(f'{self.dataset_dir}/feature_analysis.png', dpi=300, bbox_inches='tight')
         plt.show()
 
     def validate_preprocessing(self):
@@ -307,18 +310,15 @@ class ExploreAndPrepPipeline:
         self.validate_preprocessing()
     
     #Generate word clouds for positive and negative sentiments
-    def generate_wordcloud(self):
-        if self.df is None or 'processed_text' not in self.df.columns:
-            print("Please load data and apply preprocessing first!")
-            return
-        
+    def generate_wordcloud(self, save_plots=True):
+    
         fig, axes = plt.subplots(1, 2, figsize=(20, 8))
         
         # Positive sentiment word cloud
         positive_texts = ' '.join(self.df[self.df['Sentiment'] == 'positive']['processed_text'])
         if positive_texts.strip():
             wordcloud_pos = WordCloud(width=800, height=400, 
-                                     background_color='white').generate(positive_texts)
+                                     background_color='white', colormap='viridis').generate(positive_texts)
             axes[0].imshow(wordcloud_pos, interpolation='bilinear')
             axes[0].set_title('Positive Sentiment Word Cloud', fontsize=16)
             axes[0].axis('off')
@@ -327,12 +327,14 @@ class ExploreAndPrepPipeline:
         negative_texts = ' '.join(self.df[self.df['Sentiment'] == 'negative']['processed_text'])
         if negative_texts.strip():
             wordcloud_neg = WordCloud(width=800, height=400, 
-                                     background_color='white').generate(negative_texts)
+                                     background_color='white', colormap='Reds').generate(negative_texts)
             axes[1].imshow(wordcloud_neg, interpolation='bilinear')
             axes[1].set_title('Negative Sentiment Word Cloud', fontsize=16)
             axes[1].axis('off')
         
         plt.tight_layout()
+        if save_plots:
+            plt.savefig(f'{self.dataset_dir}/wordclouds.png', dpi=300, bbox_inches='tight')
         plt.show()
     
     #Get top words for each sentiment
@@ -349,11 +351,8 @@ class ExploreAndPrepPipeline:
                 if word.strip():  # Skip empty words
                     print(f"  {word}: {freq}")
     
-    def save_processed_data(self, output_path='dataset/processed_sentiment_data.csv'):
-        """Save processed data to CSV"""
-        if self.df is None or 'processed_text' not in self.df.columns:
-            print("Please load data and apply preprocessing first!")
-            return
+    def save_processed_data(self, name_file='processed_sentiment_data.csv'):
+        output_path = f'{self.dataset_dir}/{name_file}'
         
         # Save with original columns plus processed text and tokens
         output_df = self.df[['Id', 'Sentiment', 'Text Tweet', 'processed_text']].copy()
@@ -400,11 +399,9 @@ class ExploreAndPrepPipeline:
 
 if __name__ == "__main__":
     dataset_dir = "dataset"
-    csv_file = "dataset_tweet_sentiment_cellular_service_provider.csv"
-    csv_path = f"{dataset_dir}/{csv_file}"
 
     # Initialize analyzer with your CSV file path
-    analyzer = ExploreAndPrepPipeline(csv_path)
+    analyzer = ExploreAndPrepPipeline(dataset_dir)
     
     # Run complete analysis
     analyzer.run_complete_analysis()
