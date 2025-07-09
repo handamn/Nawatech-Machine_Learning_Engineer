@@ -1,0 +1,33 @@
+services:
+  qdrant:
+    image: qdrant/qdrant
+    container_name: qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
+
+  chatbot:
+    build: ./chatbot_project
+    container_name: chatbot
+    restart: unless-stopped
+    ports:
+      - "8501:8501"
+    secrets:
+      - openai_api_key
+      - pinecone_api_key
+    environment:
+      - OPENAI_API_KEY_FILE=/run/secrets/openai_api_key
+      - PINECONE_API_KEY_FILE=/run/secrets/pinecone_api_key
+    depends_on:
+      - qdrant
+
+volumes:
+  qdrant_data:
+
+secrets:
+  openai_api_key:
+    file: ./secrets/openai_api_key.txt
+  pinecone_api_key:
+    file: ./secrets/pinecone_api_key.txt

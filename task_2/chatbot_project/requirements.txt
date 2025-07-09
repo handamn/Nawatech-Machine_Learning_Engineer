@@ -1,0 +1,14 @@
+streamlit
+openai
+qdrant-client
+pandas
+numpy
+python-dotenv
+sentence-transformers
+langchain
+langchain-openai
+scikit-learn
+pinecone
+scipy
+matplotlib
+plotly
