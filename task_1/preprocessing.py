@@ -361,13 +361,13 @@ class ExploreAndPrepPipeline:
         output_df['tokens_str'] = self.df['tokens'].apply(lambda x: ' '.join(x))
         
         output_df.to_csv(output_path, index=False)
-        print(f"✓ Processed data saved to: {output_path}")
+        print(f"Processed data saved to: {output_path}")
         
         # Also save tokens as separate file for advanced usage
         tokens_df = self.df[['Id', 'Sentiment', 'tokens']].copy()
         tokens_output_path = output_path.replace('.csv', '_tokens.csv')
         tokens_df.to_csv(tokens_output_path, index=False)
-        print(f"✓ Tokens data saved to: {tokens_output_path}")
+        print(f"Tokens data saved to: {tokens_output_path}")
     
     def run_complete_analysis(self):
         print("Starting Complete Sentiment Analysis Pipeline")
